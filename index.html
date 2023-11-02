@@ -16,7 +16,12 @@
         </div>
 
         <!-- Totals Div: Contains totals for students per counselor -->
-        <div id="totals"></div>
+        <div id="totalsContainer">
+            <table id="totalsTable">
+                <th>Counselor</th>
+                <th>Total Students</th>
+            </table>
+        </div>
 
         <!-- Table that will hold results -->
         <div id="tableContainer">
@@ -99,16 +104,24 @@
                     counselor,
                     total: students.filter(student => student.counselor === counselor).length
                 }));
+                
+                // Get table representing the totals per counselor
+                let totalsTable = document.getElementById("totalsTable");
 
-                let totalsDiv = document.getElementById("totals");
-                totalsDiv.innerHTML = totals.map(total => `${total.counselor}: ${total.total}`).join(", ");
+                // Fill in table
+                totals.forEach(total => {
+                    let row = totalsTable.insertRow();
+                    row.insertCell().innerText = total.counselor;
+                    row.insertCell().innerText = total.total;
+                })
+                
 
-                // Get table element
-                let table = document.getElementById("resultTable");
+                // Get table representing the assigns
+                let resultTable = document.getElementById("resultTable");
 
                 // Fill in table
                 students.forEach(student => {
-                    let row = table.insertRow();
+                    let row = resultTable.insertRow();
                     row.insertCell().innerText = student.firstName;
                     row.insertCell().innerText = student.lastName;
                     row.insertCell().innerText = student.counselor;

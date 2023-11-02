@@ -41,10 +41,16 @@ tr:nth-child(even) {
 }
 
 #tableContainer {
-    max-height: 500px; /* Adjust as needed */
+    max-height: 400px; /* Adjust as needed */
     overflow-y: auto;
 }
 
-#totals {
+#totalsContainer {
     font-weight: bold;
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 300px;
 }
