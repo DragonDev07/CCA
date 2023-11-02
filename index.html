@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Include Stylesheet for nice colors & stuffff -->
+        <link rel="stylesheet" href="styles.css">
+    </head>
+
+    <body>
+        <!-- CSV File Upload -->
+        <input type="file" id="csvFile" accept=".csv" />
+
+        <!-- Randomize & Download Buttons -->
+        <div id="buttonContainer">
+            <button onclick="assignCounselors()">Randomize</button>
+            <button id="downloadButton" onclick="downloadCSV()" disabled>Download CSV</button>
+        </div>
+
+        <!-- Totals Div: Contains totals for students per counselor -->
+        <div id="totals"></div>
+
+        <!-- Table that will hold results -->
+        <div id="tableContainer">
+            <table id="resultTable">
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Counselor</th>
+            </table>
+        </div>
+
+        <!-- Javascript Logic -->
+        <script>
+            // Define Counselors & Students
+            let students = [];
+            let counselors = ["Jesse", "Coral", "Michelle"];
+
+            // Reset any selection of CSV file left over from site
+            document.getElementById("csvFile").value = "";
+            
+            // On CSV File Upload: Parse files and add to "students" array
+            document.getElementById("csvFile").addEventListener("change", function(evt) {
+                let file = evt.target.files[0];
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let contents = e.target.result;
+                    let lines = contents.split("\n");
+                    students = lines.slice(1).map(line => {
+                        let [firstName, lastName, grade, advisor] = line.split(",");
+                        if (firstName && lastName && grade && advisor) {
+                            return {firstName, lastName, grade, advisor};
+                        }
+                    }).filter(Boolean);
+                };
+                reader.readAsText(file);
+            }, false);
+
+            // Function used to shuffle arrays
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+
+            // Assign counselors to each student randomly
+            function assignCounselors() {
+                // If no CSV file has been uploaded, alert the user to upload one first
+                if(students.length == 0) {
+                    alert("Please upload a CSV file before randomizing.");
+                    return;
+                }
+                
+                // Shuffle arrays to be random
+                shuffleArray(students);
+                shuffleArray(counselors);
+
+                // Count & Assign students
+                let counts = new Array(counselors.length).fill(0);
+                students.forEach((student, i) => {
+                    if (student && student.lastName !== 'undefined') {
+                        let min = Math.min(...counts);
+                        let index = counts.indexOf(min);
+                        student.counselor = counselors[index];
+                        counts[index]++;
+                    }
+                });
+
+                // Display the result
+                displayResult();
+
+                // Unlock the ability to download the result
+                document.getElementById("downloadButton").disabled = false;
+            }
+
+
+            // Function to display the results
+            function displayResult() {
+                // Update counselor totals
+                let totals = counselors.map(counselor => ({
+                    counselor,
+                    total: students.filter(student => student.counselor === counselor).length
+                }));
+
+                let totalsDiv = document.getElementById("totals");
+                totalsDiv.innerHTML = totals.map(total => `${total.counselor}: ${total.total}`).join(", ");
+
+                // Get table element
+                let table = document.getElementById("resultTable");
+
+                // Fill in table
+                students.forEach(student => {
+                    let row = table.insertRow();
+                    row.insertCell().innerText = student.firstName;
+                    row.insertCell().innerText = student.lastName;
+                    row.insertCell().innerText = student.counselor;
+                });
+            }
+
+            // Function that downloads CSV when "Download CSV" button is pressed
+            function downloadCSV() {
+                // If a file hasnt been uploaded, or the data hasnt been randomized, alert the user to do so before downloading
+                if(students.length == 0 || document.getElementById("downloadButton").disabled == false) {
+                    alert("Please randomize the data before downloading.")
+                    return;
+                }
+
+                // Generate CSV
+                let csvContent = "First Name,Last Name,Counselor\n" + students.map(student => `${student.firstName},${student.lastName},${student.counselor}`).join("\n");
+                let blob = new Blob([csvContent], {type: "text/csv;charset=utf-8;"});
+                let url = URL.createObjectURL(blob);
+                let link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", "result.csv");
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        </script>
+
+    </body>
+</html>
