@@ -9,6 +9,16 @@ body {
     margin: 0;
 }
 
+h1 {
+    font-size: 2em;
+    color: #333;
+}
+
+p {
+    font-size: 1.2em;
+    color: #666;
+}
+
 input[type="file"], button {
     display: block;
     margin: 10px auto;

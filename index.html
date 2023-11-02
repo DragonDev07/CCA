@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!-- Page Tab Title -->
+        <title>CCA: College Counseling Assigner</title>
+
         <!-- Include Stylesheet for nice colors & stuffff -->
         <link rel="stylesheet" href="styles.css">
     </head>
 
     <body>
+        <!-- Page Title -->
+        <h1>CCA: College Counseling Assigner</h1>
+
         <!-- CSV File Upload -->
         <input type="file" id="csvFile" accept=".csv" />
 
@@ -17,19 +23,12 @@
 
         <!-- Totals Div: Contains totals for students per counselor -->
         <div id="totalsContainer">
-            <table id="totalsTable">
-                <th>Counselor</th>
-                <th>Total Students</th>
-            </table>
+            <table id="totalsTable"></table>
         </div>
 
         <!-- Table that will hold results -->
         <div id="tableContainer">
-            <table id="resultTable">
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Counselor</th>
-            </table>
+            <table id="resultTable"></table>
         </div>
 
         <!-- Javascript Logic -->
@@ -68,6 +67,10 @@
 
             // Assign counselors to each student randomly
             function assignCounselors() {
+                // Empty the Tables
+                document.getElementById("totalsTable").innerHTML = "<th>Counselor</th><th>Total Students</th>";
+                document.getElementById("resultTable").innerHTML = "<th>First Name</th><th>Last Name</th><th>Counselor</th>";
+
                 // If no CSV file has been uploaded, alert the user to upload one first
                 if(students.length == 0) {
                     alert("Please upload a CSV file before randomizing.");
@@ -131,7 +134,7 @@
             // Function that downloads CSV when "Download CSV" button is pressed
             function downloadCSV() {
                 // If a file hasnt been uploaded, or the data hasnt been randomized, alert the user to do so before downloading
-                if(students.length == 0 || document.getElementById("downloadButton").disabled == false) {
+                if(students.length == 0 || document.getElementById("downloadButton").disabled == true) {
                     alert("Please randomize the data before downloading.")
                     return;
                 }
